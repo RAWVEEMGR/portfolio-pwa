@@ -1,1 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio</title>
+<style>
+body{
+  font-family:system-ui;
+  background:#0b1220;
+  color:white;
+  padding:20px;
+}
+.card{
+  background:#121b2e;
+  padding:15px;
+  border-radius:12px;
+  margin:10px 0;
+}
+input{
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border-radius:8px;
+  border:none;
+}
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  background:#3b82f6;
+  color:white;
+  border:none;
+  border-radius:8px;
+}
+.item{
+  background:#121b2e;
+  padding:12px;
+  border-radius:10px;
+  margin-top:10px;
+}
+</style>
+</head>
+<body>
 
+<h1>📊 My Portfolio</h1>
+
+<div class="card">
+  <label>Stock Symbol</label>
+  <input id="symbol" placeholder="e.g. RNLI">
+  
+  <label>Units</label>
+  <input id="units" type="number" placeholder="e.g. 100">
+  
+  <label>Price</label>
+  <input id="price" type="number" placeholder="e.g. 450">
+  
+  <button onclick="add()">Add Stock</button>
+</div>
+
+<h2 id="total">Total: Rs 0</h2>
+<div id="list"></div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("p") || "[]");
+
+function save(){
+  localStorage.setItem("p", JSON.stringify(data));
+}
+
+function render(){
+  let list = document.getElementById("list");
+  list.innerHTML = "";
+  let total = 0;
+
+  data.forEach((s,i)=>{
+    let value = s.units * s.price;
+    total += value;
+
+    list.innerHTML += `
+      <div class="item">
+        <b>${s.symbol}</b><br>
+        ${s.units} units × Rs ${s.price}
+        <br><b>Value: Rs ${value}</b>
+        <br><button onclick="remove(${i})">Remove</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("total").innerText =
+    "Total: Rs " + total;
+}
+
+function add(){
+  let symbol = document.getElementById("symbol").value.toUpperCase();
+  let units = Number(document.getElementById("units").value);
+  let price = Number(document.getElementById("price").value);
+
+  if(!symbol || !units || !price) return;
+
+  data.push({symbol, units, price});
+  save();
+  render();
+}
+
+function remove(i){
+  data.splice(i,1);
+  save();
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>
